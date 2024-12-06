@@ -11,7 +11,11 @@ trait RawSolution {
 
 // Catch any panics, convert them to a generic result.
 fn catch_all<T>(f: impl FnOnce() -> T + panic::UnwindSafe) -> anyhow::Result<T> {
-    panic::catch_unwind(f).map_err(|e| anyhow!("panic: {:?}", e))
+    let previous_hook = panic::take_hook();
+    panic::set_hook(Box::new(|_| {}));
+    let out = panic::catch_unwind(f).map_err(|e| anyhow!("panic: {:?}", e.downcast_ref::<&str>()));
+    panic::set_hook(previous_hook);
+    out
 }
 
 /// Represents a solution to a particular day of advent of code.
