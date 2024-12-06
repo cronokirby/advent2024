@@ -5,17 +5,18 @@ mod day01;
 
 // This can be implemented with panics internally, no need for error handling.
 trait RawSolution {
-    fn part1(&self, input: &str) -> String;
-    fn part2(&self, input: &str) -> String;
+    fn part1(&self, input: &str) -> anyhow::Result<String>;
+    fn part2(&self, input: &str) -> anyhow::Result<String>;
 }
 
 // Catch any panics, convert them to a generic result.
-fn catch_all<T>(f: impl FnOnce() -> T + panic::UnwindSafe) -> anyhow::Result<T> {
+fn catch_all<T>(f: impl FnOnce() -> anyhow::Result<T> + panic::UnwindSafe) -> anyhow::Result<T> {
     let previous_hook = panic::take_hook();
     panic::set_hook(Box::new(|_| {}));
-    let out = panic::catch_unwind(f).map_err(|e| anyhow!("panic: {:?}", e.downcast_ref::<&str>()));
+    let out = panic::catch_unwind(f)
+        .map_err(|e| anyhow!("panic: {:?}", e.downcast_ref::<&panic::PanicInfo>()));
     panic::set_hook(previous_hook);
-    out
+    out?
 }
 
 /// Represents a solution to a particular day of advent of code.

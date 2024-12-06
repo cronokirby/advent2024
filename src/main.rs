@@ -171,7 +171,7 @@ fn run_part(
         let input = fs::read(&test_file.input)?;
         let output = fs::read(&test_file.output)?;
         let input = String::from_utf8_lossy(&input);
-        let output = String::from_utf8_lossy(&output);
+        let output = String::from_utf8_lossy(&output).trim().to_string();
         let pass = match solve(&input) {
             Ok(x) if x == output => Ok(()),
             Ok(x) => Err(anyhow!("{} != {}", x, output)),
