@@ -160,19 +160,18 @@ fn run_part(
 ) -> anyhow::Result<()> {
     println!("Part {}", part_letter);
     if let Some(input) = &part.input {
-        let input = fs::read(input)?;
-        match solve(&String::from_utf8_lossy(&input)) {
+        let input = fs::read_to_string(input)?;
+        match solve(input.trim()) {
             Ok(x) => println!("  \x1b[1;37m{}\x1b[0m", x),
             Err(e) => println!("  \x1b[0;31m{}\x1b[0m", e),
         }
     }
     println!("Tests");
     for test_file in &part.tests {
-        let input = fs::read(&test_file.input)?;
-        let output = fs::read(&test_file.output)?;
-        let input = String::from_utf8_lossy(&input);
-        let output = String::from_utf8_lossy(&output).trim().to_string();
-        let pass = match solve(&input) {
+        let input = fs::read_to_string(&test_file.input)?;
+        let output = fs::read_to_string(&test_file.output)?;
+        let output = output.trim();
+        let pass = match solve(input.trim()) {
             Ok(x) if x == output => Ok(()),
             Ok(x) => Err(anyhow!("{} != {}", x, output)),
             Err(e) => Err(e),
