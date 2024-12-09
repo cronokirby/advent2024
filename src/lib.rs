@@ -3,6 +3,7 @@ use std::panic;
 
 mod day01;
 mod day02;
+mod day03;
 
 // This can be implemented with panics internally, no need for error handling.
 trait RawSolution {
@@ -49,6 +50,7 @@ impl Solution {
         match day {
             1 => Some(day01::Solution.into()),
             2 => Some(day02::Solution.into()),
+            3 => Some(day03::Solution.into()),
             _ => None,
         }
     }
